@@ -83,6 +83,7 @@
                       @change="$emit('toggle-task', task.id)"
                       class="task-checkbox"
                     />
+                    <span class="priority-dot" :class="task.priority"></span>
                     <span class="task-title" @click="$emit('toggle-task', task.id)">{{ task.title }}</span>
                   </div>
                   <button @click="$emit('delete-task', task.id)" class="task-delete-btn" title="Delete task">
@@ -451,16 +452,23 @@ label {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
-.task-item.priority-high {
-  border-left: 4px solid var(--color-danger);
+.priority-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
 }
 
-.task-item.priority-medium {
-  border-left: 4px solid var(--color-warning-accent);
+.priority-dot.high {
+  background: var(--color-danger);
 }
 
-.task-item.priority-low {
-  border-left: 4px solid var(--color-brand);
+.priority-dot.medium {
+  background: var(--color-warning-accent);
+}
+
+.priority-dot.low {
+  background: var(--color-brand);
 }
 
 .task-item.completed {

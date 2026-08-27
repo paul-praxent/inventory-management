@@ -9,7 +9,7 @@
     <div v-else-if="error" class="error">{{ error }}</div>
     <div v-else>
       <!-- Revenue & Financial KPIs -->
-      <div class="stats-grid-finance">
+      <div class="stats-grid">
         <div class="stat-card revenue-card">
           <div class="stat-label">{{ t('finance.totalRevenue') }}</div>
           <div class="stat-value">{{ formatCurrency(revenueMetrics.totalRevenue) }}</div>
@@ -543,23 +543,28 @@ export default {
 .legend-dot.revenue-color { background: var(--color-text-heading); }
 .legend-dot.cost-color { background: var(--color-danger-accent); }
 
-.stats-grid-finance {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
+.revenue-card .stat-label::before,
+.cost-card .stat-label::before,
+.profit-card .stat-label::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin-right: 0.375rem;
+  vertical-align: middle;
 }
 
-.revenue-card {
-  border-left: 4px solid var(--color-text-heading);
+.revenue-card .stat-label::before {
+  background: var(--color-text-heading);
 }
 
-.cost-card {
-  border-left: 4px solid var(--color-danger-accent);
+.cost-card .stat-label::before {
+  background: var(--color-danger-accent);
 }
 
-.profit-card {
-  border-left: 4px solid var(--color-brand-accent);
+.profit-card .stat-label::before {
+  background: var(--color-brand-accent);
 }
 
 .stat-meta {

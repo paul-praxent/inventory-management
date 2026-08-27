@@ -413,31 +413,17 @@ export default {
   margin-top: 1.5rem;
 }
 
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1rem;
-  margin-top: 1.5rem;
-}
-
-.stat-card {
-  background: white;
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  border-left: 4px solid var(--color-brand-accent);
-}
-
-.stat-label {
-  font-size: 0.875rem;
-  color: var(--color-text-muted);
-  margin-bottom: 0.5rem;
-}
-
-.stat-value {
-  font-size: 1.875rem;
-  font-weight: 700;
-  color: var(--color-text-heading);
+/* .stats-grid / .stat-card / .stat-label / .stat-value are provided by the
+   shared global rules in App.vue - only the accent dot below is local. */
+.stats-grid .stat-label::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-brand-accent);
+  margin-right: 0.375rem;
+  vertical-align: middle;
 }
 
 .badge {

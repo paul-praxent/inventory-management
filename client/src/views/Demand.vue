@@ -243,18 +243,6 @@ export default {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-.increasing-card {
-  border-left: 4px solid var(--color-success-accent);
-}
-
-.stable-card {
-  border-left: 4px solid var(--color-brand-accent);
-}
-
-.decreasing-card {
-  border-left: 4px solid var(--color-danger-accent);
-}
-
 .trend-header {
   display: flex;
   align-items: center;
@@ -297,6 +285,28 @@ export default {
   color: var(--color-text-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
+}
+
+.trend-label::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin-right: 0.375rem;
+  vertical-align: middle;
+}
+
+.increasing-card .trend-label::before {
+  background: var(--color-success-accent);
+}
+
+.stable-card .trend-label::before {
+  background: var(--color-brand-accent);
+}
+
+.decreasing-card .trend-label::before {
+  background: var(--color-danger-accent);
 }
 
 .trend-count {
