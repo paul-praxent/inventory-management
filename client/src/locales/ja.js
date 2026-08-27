@@ -79,6 +79,7 @@ export default {
     stockLevels: '在庫レベル',
     skus: 'SKU',
     searchPlaceholder: '品目名で検索...',
+    searchAriaLabel: '名前またはSKUで在庫を検索',
     clearSearch: '検索をクリア',
     totalItems: '総品目数',
     totalValue: '総価値',

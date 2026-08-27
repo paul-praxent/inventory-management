@@ -2,8 +2,11 @@
   <div class="language-switcher">
     <button
       class="language-button"
+      aria-haspopup="true"
+      :aria-expanded="isDropdownOpen"
       @click="toggleDropdown"
       @blur="handleBlur"
+      @keydown.escape="closeDropdown"
     >
       <svg
         width="20"
@@ -30,11 +33,12 @@
       </svg>
     </button>
 
-    <div v-if="isDropdownOpen" class="dropdown-menu">
+    <div v-if="isDropdownOpen" class="dropdown-menu" role="menu" @keydown.escape="closeDropdown">
       <button
         v-for="locale in availableLocales"
         :key="locale"
         class="dropdown-item"
+        role="menuitem"
         :class="{ active: currentLocale === locale }"
         @mousedown.prevent="selectLanguage(locale)"
       >
@@ -80,6 +84,10 @@ const handleBlur = () => {
   setTimeout(() => {
     isDropdownOpen.value = false
   }, 200)
+}
+
+const closeDropdown = () => {
+  isDropdownOpen.value = false
 }
 
 const selectLanguage = (locale) => {

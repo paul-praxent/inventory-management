@@ -79,6 +79,7 @@ export default {
     stockLevels: 'Stock Levels',
     skus: 'SKUs',
     searchPlaceholder: 'Search by item name...',
+    searchAriaLabel: 'Search inventory by name or SKU',
     clearSearch: 'Clear search',
     totalItems: 'Total Items',
     totalValue: 'Total Value',

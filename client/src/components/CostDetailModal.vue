@@ -2,10 +2,19 @@
   <Teleport to="body">
     <Transition name="modal">
       <div v-if="isOpen && costData" class="modal-overlay" @click="close">
-        <div class="modal-container" @click.stop>
+        <div
+          ref="modalRef"
+          class="modal-container"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="cost-detail-modal-title"
+          tabindex="-1"
+          @click.stop
+          @keydown.escape="handleEscape"
+        >
           <div class="modal-header">
-            <h3 class="modal-title">{{ costData.month }} Cost Breakdown</h3>
-            <button class="close-button" @click="close">
+            <h3 id="cost-detail-modal-title" class="modal-title">{{ costData.month }} Cost Breakdown</h3>
+            <button class="close-button" :aria-label="t('common.close')" @click="close">
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                 <path d="M15 5L5 15M5 5L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
               </svg>
@@ -98,8 +107,9 @@
 <script setup>
 import { computed } from 'vue'
 import { useI18n } from '../composables/useI18n'
+import { useModalA11y } from '../composables/useModalA11y'
 
-const { currentCurrency } = useI18n()
+const { t, currentCurrency } = useI18n()
 
 const currencySymbol = computed(() => {
   return currentCurrency.value === 'JPY' ? '¥' : '$'
@@ -147,6 +157,8 @@ const getOverheadPercentage = () => {
 const close = () => {
   emit('close')
 }
+
+const { modalRef, handleEscape } = useModalA11y(() => props.isOpen, close)
 </script>
 
 <style scoped>

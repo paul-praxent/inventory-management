@@ -2,8 +2,11 @@
   <div class="profile-menu">
     <button
       class="profile-button"
+      aria-haspopup="true"
+      :aria-expanded="isDropdownOpen"
       @click="toggleDropdown"
       @blur="handleBlur"
+      @keydown.escape="closeDropdown"
     >
       <div class="avatar">
         {{ getInitials(currentUser.name) }}
@@ -21,7 +24,7 @@
       </svg>
     </button>
 
-    <div v-if="isDropdownOpen" class="dropdown-menu">
+    <div v-if="isDropdownOpen" class="dropdown-menu" role="menu" @keydown.escape="closeDropdown">
       <div class="dropdown-header">
         <div class="avatar-large">
           {{ getInitials(currentUser.name) }}
@@ -36,6 +39,7 @@
 
       <button
         class="dropdown-item"
+        role="menuitem"
         @mousedown.prevent="showProfileDetails"
       >
         <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
@@ -47,6 +51,7 @@
 
       <button
         class="dropdown-item"
+        role="menuitem"
         @mousedown.prevent="showTasks"
       >
         <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
@@ -61,6 +66,7 @@
 
       <button
         class="dropdown-item logout"
+        role="menuitem"
         @mousedown.prevent="handleLogout"
       >
         <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
@@ -97,6 +103,10 @@ const handleBlur = () => {
   setTimeout(() => {
     isDropdownOpen.value = false
   }, 200)
+}
+
+const closeDropdown = () => {
+  isDropdownOpen.value = false
 }
 
 const showProfileDetails = () => {

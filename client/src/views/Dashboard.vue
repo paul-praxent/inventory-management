@@ -187,23 +187,29 @@
                 <tr
                   v-for="item in backlogItems"
                   :key="item.id"
+                  class="clickable-row"
+                  role="button"
+                  tabindex="0"
+                  @click="showBacklogDetail(item)"
+                  @keydown.enter="showBacklogDetail(item)"
+                  @keydown.space.prevent="showBacklogDetail(item)"
                 >
-                  <td @click="showBacklogDetail(item)" style="cursor: pointer;"><strong>{{ item.order_id }}</strong></td>
-                  <td @click="showBacklogDetail(item)" style="cursor: pointer;"><strong>{{ item.item_sku }}</strong></td>
-                  <td @click="showBacklogDetail(item)" style="cursor: pointer;">{{ translateProductName(item.item_name) }}</td>
-                  <td @click="showBacklogDetail(item)" style="cursor: pointer;">{{ item.quantity_needed }}</td>
-                  <td @click="showBacklogDetail(item)" style="cursor: pointer;">{{ item.quantity_available }}</td>
-                  <td @click="showBacklogDetail(item)" style="cursor: pointer;">
+                  <td><strong>{{ item.order_id }}</strong></td>
+                  <td><strong>{{ item.item_sku }}</strong></td>
+                  <td>{{ translateProductName(item.item_name) }}</td>
+                  <td>{{ item.quantity_needed }}</td>
+                  <td>{{ item.quantity_available }}</td>
+                  <td>
                     <span class="badge danger">
                       {{ Math.abs(item.quantity_needed - item.quantity_available) }} {{ t('dashboard.inventoryShortages.unitsShort') }}
                     </span>
                   </td>
-                  <td @click="showBacklogDetail(item)" style="cursor: pointer;">
+                  <td>
                     <span :style="{ color: item.days_delayed > 7 ? 'var(--color-danger-accent)' : 'var(--color-warning-accent)', fontWeight: 600 }">
                       {{ item.days_delayed }} {{ t('dashboard.inventoryShortages.days') }}
                     </span>
                   </td>
-                  <td @click="showBacklogDetail(item)" style="cursor: pointer;">
+                  <td>
                     <span :class="['badge', item.priority]">
                       {{ translatePriority(item.priority) }}
                     </span>
@@ -212,6 +218,7 @@
                     <button
                       v-if="!item.purchase_order_id"
                       @click.stop="openPOModal(item)"
+                      @keydown.stop
                       class="po-button create"
                     >
                       Create PO
@@ -219,6 +226,7 @@
                     <button
                       v-else
                       @click.stop="viewPO(item)"
+                      @keydown.stop
                       class="po-button view"
                     >
                       View PO
@@ -253,7 +261,11 @@
                   v-for="item in topProducts"
                   :key="item.sku"
                   class="clickable-row"
+                  role="button"
+                  tabindex="0"
                   @click="showProductDetail(item)"
+                  @keydown.enter="showProductDetail(item)"
+                  @keydown.space.prevent="showProductDetail(item)"
                 >
                   <td><strong>{{ translateProductName(item.name) }}</strong></td>
                   <td>{{ item.sku }}</td>
@@ -1110,6 +1122,11 @@ export default {
 
 .clickable-row:hover {
   background: var(--color-brand-light) !important;
+}
+
+.clickable-row:focus-visible {
+  outline: 2px solid var(--color-brand-accent);
+  outline-offset: -2px;
 }
 
 .po-button {

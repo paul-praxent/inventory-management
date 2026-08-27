@@ -89,7 +89,14 @@
             </div>
             <div class="chart-area">
               <div v-for="month in monthlySpending" :key="month.month" class="bar-group">
-                <div class="stacked-bar" @click="showCostDetail(month)">
+                <div
+                  class="stacked-bar"
+                  role="button"
+                  tabindex="0"
+                  @click="showCostDetail(month)"
+                  @keydown.enter="showCostDetail(month)"
+                  @keydown.space.prevent="showCostDetail(month)"
+                >
                   <div class="bar-segment procurement" :style="{ height: getBarHeight(month.procurement) + '%' }" :title="`Procurement: ${currencySymbol}${month.procurement.toLocaleString()}`"></div>
                   <div class="bar-segment operational" :style="{ height: getBarHeight(month.operational) + '%' }" :title="`Operational: ${currencySymbol}${month.operational.toLocaleString()}`"></div>
                   <div class="bar-segment labor" :style="{ height: getBarHeight(month.labor) + '%' }" :title="`Labor: ${currencySymbol}${month.labor.toLocaleString()}`"></div>
@@ -148,7 +155,11 @@
                   v-for="transaction in recentTransactions"
                   :key="transaction.id"
                   class="clickable-row"
+                  role="button"
+                  tabindex="0"
                   @click="handleTransactionClick(transaction)"
+                  @keydown.enter="handleTransactionClick(transaction)"
+                  @keydown.space.prevent="handleTransactionClick(transaction)"
                 >
                   <td class="transaction-id">{{ transaction.id.toString().padStart(3, '0') }}</td>
                   <td class="transaction-description">{{ transaction.description }}</td>
@@ -666,6 +677,11 @@ export default {
   opacity: 0.85;
 }
 
+.stacked-bar:focus-visible {
+  outline: 2px solid var(--color-brand-accent);
+  outline-offset: 2px;
+}
+
 .bar-segment {
   width: 100%;
   transition: all 0.3s ease;
@@ -823,6 +839,11 @@ export default {
 
 .transactions-table tbody tr.clickable-row:hover {
   background: var(--color-brand-light);
+}
+
+.transactions-table tbody tr.clickable-row:focus-visible {
+  outline: 2px solid var(--color-brand-accent);
+  outline-offset: -2px;
 }
 
 .transaction-id {
