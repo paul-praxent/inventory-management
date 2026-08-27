@@ -360,6 +360,7 @@ body {
   display: flex;
   align-items: baseline;
   gap: 0.75rem;
+  flex-shrink: 0;
 }
 
 .logo h1 {
@@ -368,6 +369,7 @@ body {
   font-weight: 700;
   color: var(--color-text-heading);
   letter-spacing: -0.025em;
+  white-space: nowrap;
 }
 
 .subtitle {

@@ -147,10 +147,9 @@
               <div v-for="cat in categoryBars" :key="cat.name" class="h-bar-item">
                 <div class="h-bar-label">{{ translateCategory(cat.name) }}</div>
                 <div class="h-bar-container">
-                  <div class="h-bar" :style="{ transform: `scaleX(${cat.scale})`, background: cat.color }">
-                    <span class="h-bar-value" :style="{ transform: `scaleX(${getInverseScale(cat.scale)})` }">{{ selectedCurrency === 'JPY' ? formatCurrency(cat.value, selectedCurrency) : `$${(cat.value / 1000).toFixed(1)}K` }}</span>
-                  </div>
+                  <div class="h-bar" :style="{ transform: `scaleX(${cat.scale})`, background: cat.color }"></div>
                 </div>
+                <span class="h-bar-value">{{ selectedCurrency === 'JPY' ? formatCurrency(cat.value, selectedCurrency) : `$${(cat.value / 1000).toFixed(1)}K` }}</span>
               </div>
             </div>
             <div v-else class="no-data">{{ t('dashboard.inventoryShortages.noData') }}</div>
@@ -472,10 +471,6 @@ export default {
       }))
     })
 
-    // The bar's inner label is a child of the scaled bar element, so it needs
-    // an inverse scale to counteract the parent's scaleX and stay undistorted.
-    const getInverseScale = (scale) => 1 / Math.max(scale, 0.001)
-
     const orderTrendData = computed(() => {
       // Group orders by month from the actual data
       const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -717,7 +712,6 @@ export default {
       categoryData,
       maxCategoryValue,
       categoryBars,
-      getInverseScale,
       orderTrendData,
       maxOrderCount,
       topProducts,
@@ -1016,18 +1010,22 @@ export default {
 .h-bar {
   width: 100%;
   height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  padding-right: 0.75rem;
   transform-origin: left;
   transition: transform 0.6s ease;
 }
 
+/* Rendered as its own flex column after .h-bar-container (not layered on
+   top of the scaled fill), so its size/position never depends on cat.scale
+   -- avoids the clipping bug from nested counter-transforms, regardless of
+   how small the fill gets. */
 .h-bar-value {
+  width: 64px;
+  min-width: 64px;
+  flex-shrink: 0;
+  text-align: right;
   font-size: 0.813rem;
   font-weight: 700;
-  color: white;
+  color: var(--color-text-label);
 }
 
 .line-chart {
