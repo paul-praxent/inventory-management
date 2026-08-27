@@ -18,7 +18,7 @@
             <div class="kpi-value">4.2</div>
             <div class="kpi-goal">{{ t('dashboard.kpi.goal') }}: 4.5 (-6.67%)</div>
             <div class="kpi-progress-bar">
-              <div class="kpi-progress" style="width: 93.33%"></div>
+              <div class="kpi-progress" :style="{ transform: 'scaleX(0.9333)' }"></div>
             </div>
           </div>
 
@@ -29,7 +29,7 @@
             <div class="kpi-value">{{ ordersData.fulfilled }}</div>
             <div class="kpi-goal">{{ t('dashboard.kpi.goal') }}: {{ ordersData.goal }} ({{ calculatePercentage(ordersData.fulfilled, ordersData.goal) }}%)</div>
             <div class="kpi-progress-bar">
-              <div class="kpi-progress" :style="{ width: calculatePercentage(ordersData.fulfilled, ordersData.goal) + '%' }"></div>
+              <div class="kpi-progress" :style="{ transform: `scaleX(${calculatePercentage(ordersData.fulfilled, ordersData.goal) / 100})` }"></div>
             </div>
           </div>
 
@@ -40,7 +40,7 @@
             <div class="kpi-value">{{ fillRate }}%</div>
             <div class="kpi-goal">{{ t('dashboard.kpi.goal') }}: 95% ({{ fillRate - 95 > 0 ? '+' : '' }}{{ (fillRate - 95).toFixed(2) }}%)</div>
             <div class="kpi-progress-bar">
-              <div class="kpi-progress success" :style="{ width: (fillRate / 95 * 100) + '%' }"></div>
+              <div class="kpi-progress success" :style="{ transform: `scaleX(${fillRate / 95})` }"></div>
             </div>
           </div>
 
@@ -51,7 +51,7 @@
             <div class="kpi-value">{{ formatCurrency(Math.round(summary.total_orders_value), selectedCurrency) }}</div>
             <div class="kpi-goal">{{ t('dashboard.kpi.goal') }}: {{ formatCurrency(revenueGoal, selectedCurrency) }} ({{ summary.total_orders_value > revenueGoal ? '+' : '' }}{{ ((summary.total_orders_value / revenueGoal - 1) * 100).toFixed(1) }}%)</div>
             <div class="kpi-progress-bar">
-              <div class="kpi-progress" :style="{ width: Math.min((summary.total_orders_value / revenueGoal * 100), 100) + '%' }"></div>
+              <div class="kpi-progress" :style="{ transform: `scaleX(${Math.min(summary.total_orders_value / revenueGoal, 1)})` }"></div>
             </div>
           </div>
 
@@ -62,7 +62,7 @@
             <div class="kpi-value">2.8</div>
             <div class="kpi-goal">{{ t('dashboard.kpi.goal') }}: 3.0 (-6.67%)</div>
             <div class="kpi-progress-bar">
-              <div class="kpi-progress success" style="width: 93.33%"></div>
+              <div class="kpi-progress success" :style="{ transform: 'scaleX(0.9333)' }"></div>
             </div>
           </div>
         </div>
@@ -143,12 +143,12 @@
             <h3 class="card-title">{{ t('dashboard.inventoryValue.title') }}</h3>
           </div>
           <div class="chart-content">
-            <div class="horizontal-bar-chart" v-if="categoryData.length > 0">
-              <div v-for="cat in categoryData" :key="cat.name" class="h-bar-item">
+            <div class="horizontal-bar-chart" v-if="categoryBars.length > 0">
+              <div v-for="cat in categoryBars" :key="cat.name" class="h-bar-item">
                 <div class="h-bar-label">{{ translateCategory(cat.name) }}</div>
                 <div class="h-bar-container">
-                  <div class="h-bar" :style="{ width: (cat.value / maxCategoryValue * 100) + '%', background: cat.color }">
-                    <span class="h-bar-value">{{ selectedCurrency === 'JPY' ? formatCurrency(cat.value, selectedCurrency) : `$${(cat.value / 1000).toFixed(1)}K` }}</span>
+                  <div class="h-bar" :style="{ transform: `scaleX(${cat.scale})`, background: cat.color }">
+                    <span class="h-bar-value" :style="{ transform: `scaleX(${getInverseScale(cat.scale)})` }">{{ selectedCurrency === 'JPY' ? formatCurrency(cat.value, selectedCurrency) : `$${(cat.value / 1000).toFixed(1)}K` }}</span>
                   </div>
                 </div>
               </div>
@@ -462,6 +462,20 @@ export default {
       return Math.max(...categoryData.value.map(c => c.value))
     })
 
+    // categoryData with a precomputed 0-1 scale so the bar fill can use a
+    // transform (GPU-composited) instead of animating width (triggers layout).
+    const categoryBars = computed(() => {
+      const max = maxCategoryValue.value
+      return categoryData.value.map(cat => ({
+        ...cat,
+        scale: max > 0 ? cat.value / max : 0
+      }))
+    })
+
+    // The bar's inner label is a child of the scaled bar element, so it needs
+    // an inverse scale to counteract the parent's scaleX and stay undistorted.
+    const getInverseScale = (scale) => 1 / Math.max(scale, 0.001)
+
     const orderTrendData = computed(() => {
       // Group orders by month from the actual data
       const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
@@ -702,6 +716,8 @@ export default {
       orderHealthMetrics,
       categoryData,
       maxCategoryValue,
+      categoryBars,
+      getInverseScale,
       orderTrendData,
       maxOrderCount,
       topProducts,
@@ -812,10 +828,12 @@ export default {
 }
 
 .kpi-progress {
+  width: 100%;
   height: 100%;
   background: var(--color-brand-accent);
   border-radius: 3px;
-  transition: width 0.6s ease;
+  transform-origin: left;
+  transition: transform 0.6s ease;
 }
 
 .kpi-progress.success {
@@ -996,12 +1014,14 @@ export default {
 }
 
 .h-bar {
+  width: 100%;
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: flex-end;
   padding-right: 0.75rem;
-  transition: width 0.6s ease;
+  transform-origin: left;
+  transition: transform 0.6s ease;
 }
 
 .h-bar-value {

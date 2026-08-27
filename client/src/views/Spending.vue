@@ -122,7 +122,7 @@
                 <div class="category-amount">{{ currencySymbol }}{{ category.amount.toLocaleString() }}</div>
               </div>
               <div class="category-bar-container">
-                <div class="category-bar" :style="{ width: category.percentage + '%' }"></div>
+                <div class="category-bar" :style="{ transform: `scaleX(${category.percentage / 100})` }"></div>
               </div>
               <div class="category-meta">
                 <span class="percentage">{{ category.percentage }}% {{ t('finance.categorySpending.ofTotal') }}</span>
@@ -183,7 +183,7 @@
 </template>
 
 <script>
-import { ref, onMounted, watch, computed } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { api } from '../api'
 import { useFilters } from '../composables/useFilters'
 import { useI18n } from '../composables/useI18n'
@@ -380,11 +380,6 @@ export default {
         loading.value = false
       }
     }
-
-    // Watch for period filter changes
-    watch([selectedPeriod], () => {
-      // Data will automatically update via computed properties
-    })
 
     const formatCurrency = (value) => {
       return formatCurrencyUtil(value, currentCurrency.value)
@@ -757,10 +752,12 @@ export default {
 }
 
 .category-bar {
+  width: 100%;
   height: 100%;
   background: linear-gradient(90deg, var(--color-brand-accent) 0%, var(--color-brand) 100%);
   border-radius: 4px;
-  transition: width 0.6s ease;
+  transform-origin: left;
+  transition: transform 0.6s ease;
 }
 
 .category-meta {
