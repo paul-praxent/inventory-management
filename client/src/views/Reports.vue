@@ -1,27 +1,27 @@
 <template>
   <div class="reports">
     <div class="page-header">
-      <h2>Performance Reports</h2>
-      <p>View quarterly performance metrics and monthly trends</p>
+      <h2>{{ t('reports.title') }}</h2>
+      <p>{{ t('reports.description') }}</p>
     </div>
 
-    <div v-if="loading" class="loading">Loading reports...</div>
+    <div v-if="loading" class="loading">{{ t('common.loading') }}</div>
     <div v-else-if="error" class="error">{{ error }}</div>
     <div v-else>
       <!-- Quarterly Performance -->
       <div class="card">
         <div class="card-header">
-          <h3 class="card-title">Quarterly Performance</h3>
+          <h3 class="card-title">{{ t('reports.quarterlyPerformance.title') }}</h3>
         </div>
         <div class="table-container">
           <table class="reports-table">
             <thead>
               <tr>
-                <th>Quarter</th>
-                <th>Total Orders</th>
-                <th>Total Revenue</th>
-                <th>Avg Order Value</th>
-                <th>Fulfillment Rate</th>
+                <th>{{ t('reports.quarterlyPerformance.quarter') }}</th>
+                <th>{{ t('reports.quarterlyPerformance.totalOrders') }}</th>
+                <th>{{ t('reports.quarterlyPerformance.totalRevenue') }}</th>
+                <th>{{ t('reports.quarterlyPerformance.avgOrderValue') }}</th>
+                <th>{{ t('reports.quarterlyPerformance.fulfillmentRate') }}</th>
               </tr>
             </thead>
             <tbody>
@@ -44,7 +44,7 @@
       <!-- Monthly Trends Chart -->
       <div class="card">
         <div class="card-header">
-          <h3 class="card-title">Monthly Revenue Trend</h3>
+          <h3 class="card-title">{{ t('reports.monthlyTrend.title') }}</h3>
         </div>
         <div class="chart-container">
           <div class="bar-chart">
@@ -65,17 +65,17 @@
       <!-- Month-over-Month Comparison -->
       <div class="card">
         <div class="card-header">
-          <h3 class="card-title">Month-over-Month Analysis</h3>
+          <h3 class="card-title">{{ t('reports.monthOverMonth.title') }}</h3>
         </div>
         <div class="table-container">
           <table class="reports-table">
             <thead>
               <tr>
-                <th>Month</th>
-                <th>Orders</th>
-                <th>Revenue</th>
-                <th>Change</th>
-                <th>Growth Rate</th>
+                <th>{{ t('reports.monthOverMonth.month') }}</th>
+                <th>{{ t('reports.monthOverMonth.orders') }}</th>
+                <th>{{ t('reports.monthOverMonth.revenue') }}</th>
+                <th>{{ t('reports.monthOverMonth.change') }}</th>
+                <th>{{ t('reports.monthOverMonth.growthRate') }}</th>
               </tr>
             </thead>
             <tbody>
@@ -104,19 +104,19 @@
       <!-- Summary Stats -->
       <div class="stats-grid">
         <div class="stat-card">
-          <div class="stat-label">Total Revenue (YTD)</div>
+          <div class="stat-label">{{ t('reports.summary.totalRevenueYTD') }}</div>
           <div class="stat-value">${{ formatNumber(totalRevenue) }}</div>
         </div>
         <div class="stat-card">
-          <div class="stat-label">Avg Monthly Revenue</div>
+          <div class="stat-label">{{ t('reports.summary.avgMonthlyRevenue') }}</div>
           <div class="stat-value">${{ formatNumber(avgMonthlyRevenue) }}</div>
         </div>
         <div class="stat-card">
-          <div class="stat-label">Total Orders (YTD)</div>
+          <div class="stat-label">{{ t('reports.summary.totalOrdersYTD') }}</div>
           <div class="stat-value">{{ totalOrders }}</div>
         </div>
         <div class="stat-card">
-          <div class="stat-label">Best Performing Quarter</div>
+          <div class="stat-label">{{ t('reports.summary.bestQuarter') }}</div>
           <div class="stat-value">{{ bestQuarter }}</div>
         </div>
       </div>
@@ -125,93 +125,90 @@
 </template>
 
 <script>
+import { ref, onMounted } from 'vue'
 import axios from 'axios'
+import { useI18n } from '../composables/useI18n'
 
 export default {
   name: 'Reports',
-  data() {
-    return {
-      loading: true,
-      error: null,
-      quarterlyData: [],
-      monthlyData: [],
-      totalRevenue: 0,
-      avgMonthlyRevenue: 0,
-      totalOrders: 0,
-      bestQuarter: ''
-    }
-  },
-  mounted() {
-    console.log('Reports component mounted')
-    this.loadData()
-  },
-  methods: {
-    async loadData() {
-      console.log('Loading reports data...')
-      try {
-        this.loading = true
+  setup() {
+    const { t } = useI18n()
 
-        // Fetch quarterly data
-        console.log('Fetching quarterly data...')
-        const quarterlyResponse = await axios.get('http://localhost:8001/api/reports/quarterly')
-        this.quarterlyData = quarterlyResponse.data
-        console.log('Quarterly data:', this.quarterlyData)
+    const loading = ref(true)
+    const error = ref(null)
+    const quarterlyData = ref([])
+    const monthlyData = ref([])
+    const totalRevenue = ref(0)
+    const avgMonthlyRevenue = ref(0)
+    const totalOrders = ref(0)
+    const bestQuarter = ref('')
 
-        // Fetch monthly data
-        console.log('Fetching monthly data...')
-        const monthlyResponse = await axios.get('http://localhost:8001/api/reports/monthly-trends')
-        this.monthlyData = monthlyResponse.data
-        console.log('Monthly data:', this.monthlyData)
-
-        // Calculate summary stats
-        console.log('Calculating summary stats...')
-        this.calculateSummaryStats()
-        console.log('Summary stats calculated')
-
-      } catch (err) {
-        console.log('Error loading reports:', err)
-        this.error = 'Failed to load reports: ' + err.message
-      } finally {
-        this.loading = false
-        console.log('Loading complete')
-      }
-    },
-
-    calculateSummaryStats() {
+    const calculateSummaryStats = () => {
       // Calculate total revenue
       var total = 0
-      for (var i = 0; i < this.monthlyData.length; i++) {
-        total = total + this.monthlyData[i].revenue
+      for (var i = 0; i < monthlyData.value.length; i++) {
+        total = total + monthlyData.value[i].revenue
       }
-      this.totalRevenue = total
+      totalRevenue.value = total
 
       // Calculate average monthly revenue
-      if (this.monthlyData.length > 0) {
-        this.avgMonthlyRevenue = total / this.monthlyData.length
+      if (monthlyData.value.length > 0) {
+        avgMonthlyRevenue.value = total / monthlyData.value.length
       } else {
-        this.avgMonthlyRevenue = 0
+        avgMonthlyRevenue.value = 0
       }
 
       // Calculate total orders
       var orders = 0
-      for (var i = 0; i < this.monthlyData.length; i++) {
-        orders = orders + this.monthlyData[i].order_count
+      for (var i = 0; i < monthlyData.value.length; i++) {
+        orders = orders + monthlyData.value[i].order_count
       }
-      this.totalOrders = orders
+      totalOrders.value = orders
 
       // Find best quarter
       var bestQ = ''
       var bestRevenue = 0
-      for (var i = 0; i < this.quarterlyData.length; i++) {
-        if (this.quarterlyData[i].total_revenue > bestRevenue) {
-          bestRevenue = this.quarterlyData[i].total_revenue
-          bestQ = this.quarterlyData[i].quarter
+      for (var i = 0; i < quarterlyData.value.length; i++) {
+        if (quarterlyData.value[i].total_revenue > bestRevenue) {
+          bestRevenue = quarterlyData.value[i].total_revenue
+          bestQ = quarterlyData.value[i].quarter
         }
       }
-      this.bestQuarter = bestQ
-    },
+      bestQuarter.value = bestQ
+    }
 
-    formatNumber(num) {
+    const loadData = async () => {
+      console.log('Loading reports data...')
+      try {
+        loading.value = true
+
+        // Fetch quarterly data
+        console.log('Fetching quarterly data...')
+        const quarterlyResponse = await axios.get('http://localhost:8001/api/reports/quarterly')
+        quarterlyData.value = quarterlyResponse.data
+        console.log('Quarterly data:', quarterlyData.value)
+
+        // Fetch monthly data
+        console.log('Fetching monthly data...')
+        const monthlyResponse = await axios.get('http://localhost:8001/api/reports/monthly-trends')
+        monthlyData.value = monthlyResponse.data
+        console.log('Monthly data:', monthlyData.value)
+
+        // Calculate summary stats
+        console.log('Calculating summary stats...')
+        calculateSummaryStats()
+        console.log('Summary stats calculated')
+
+      } catch (err) {
+        console.log('Error loading reports:', err)
+        error.value = 'Failed to load reports: ' + err.message
+      } finally {
+        loading.value = false
+        console.log('Loading complete')
+      }
+    }
+
+    const formatNumber = (num) => {
       console.log('Formatting number:', num)
       // Format number with commas
       var str = num.toString()
@@ -237,28 +234,32 @@ export default {
       }
 
       return formatted + '.' + decPart
-    },
+    }
 
-    formatMonth(monthStr) {
+    const formatMonth = (monthStr) => {
       console.log('Formatting month:', monthStr)
       // Convert YYYY-MM to readable format
       var parts = monthStr.split('-')
       var year = parts[0]
       var month = parts[1]
 
-      var monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+      var monthNames = [
+        t('months.jan'), t('months.feb'), t('months.mar'), t('months.apr'),
+        t('months.may'), t('months.jun'), t('months.jul'), t('months.aug'),
+        t('months.sep'), t('months.oct'), t('months.nov'), t('months.dec')
+      ]
       var monthIndex = parseInt(month) - 1
 
       return monthNames[monthIndex] + ' ' + year
-    },
+    }
 
-    getBarHeight(revenue) {
+    const getBarHeight = (revenue) => {
       console.log('Calculating bar height for revenue:', revenue)
       // Calculate bar height (max height 200px)
       var maxRevenue = 0
-      for (var i = 0; i < this.monthlyData.length; i++) {
-        if (this.monthlyData[i].revenue > maxRevenue) {
-          maxRevenue = this.monthlyData[i].revenue
+      for (var i = 0; i < monthlyData.value.length; i++) {
+        if (monthlyData.value[i].revenue > maxRevenue) {
+          maxRevenue = monthlyData.value[i].revenue
         }
       }
 
@@ -268,9 +269,9 @@ export default {
 
       var height = (revenue / maxRevenue) * 200
       return height
-    },
+    }
 
-    getFulfillmentClass(rate) {
+    const getFulfillmentClass = (rate) => {
       if (rate >= 90) {
         return 'badge success'
       } else if (rate >= 75) {
@@ -278,20 +279,20 @@ export default {
       } else {
         return 'badge danger'
       }
-    },
+    }
 
-    getChangeValue(current, previous) {
+    const getChangeValue = (current, previous) => {
       var change = current - previous
       if (change > 0) {
-        return '+$' + this.formatNumber(change)
+        return '+$' + formatNumber(change)
       } else if (change < 0) {
-        return '-$' + this.formatNumber(Math.abs(change))
+        return '-$' + formatNumber(Math.abs(change))
       } else {
         return '$0.00'
       }
-    },
+    }
 
-    getChangeClass(current, previous) {
+    const getChangeClass = (current, previous) => {
       var change = current - previous
       if (change > 0) {
         return 'positive-change'
@@ -300,9 +301,9 @@ export default {
       } else {
         return ''
       }
-    },
+    }
 
-    getGrowthRate(current, previous) {
+    const getGrowthRate = (current, previous) => {
       if (previous === 0) {
         return 'N/A'
       }
@@ -311,6 +312,30 @@ export default {
       var sign = rate > 0 ? '+' : ''
 
       return sign + rate.toFixed(1) + '%'
+    }
+
+    onMounted(() => {
+      console.log('Reports component mounted')
+      loadData()
+    })
+
+    return {
+      t,
+      loading,
+      error,
+      quarterlyData,
+      monthlyData,
+      totalRevenue,
+      avgMonthlyRevenue,
+      totalOrders,
+      bestQuarter,
+      formatNumber,
+      formatMonth,
+      getBarHeight,
+      getFulfillmentClass,
+      getChangeValue,
+      getChangeClass,
+      getGrowthRate
     }
   }
 }
