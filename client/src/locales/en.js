@@ -9,7 +9,9 @@ export default {
     backlog: 'Backlog',
     reports: 'Reports',
     companyName: 'Catalyst Components',
-    subtitle: 'Inventory Management System'
+    subtitle: 'Inventory Management System',
+    collapseSidebar: 'Collapse sidebar',
+    expandSidebar: 'Expand sidebar'
   },
 
   // Dashboard
@@ -237,7 +239,8 @@ export default {
       orders: 'Orders',
       revenue: 'Revenue',
       change: 'Change',
-      growthRate: 'Growth Rate'
+      growthRate: 'Growth Rate',
+      notAvailable: 'N/A'
     },
     summary: {
       totalRevenueYTD: 'Total Revenue (YTD)',
