@@ -92,6 +92,20 @@
         </router-link>
 
         <router-link
+          to="/backlog"
+          class="nav-link"
+          :class="{ active: $route.path === '/backlog' }"
+          :title="isSidebarCollapsed ? t('nav.backlog') : null"
+        >
+          <svg class="nav-icon" viewBox="0 0 20 20" fill="none">
+            <path d="M4 5H16M4 10H16M4 15H11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M15 11.5V13.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="15" cy="16" r="0.75" fill="currentColor"/>
+          </svg>
+          <span v-if="!isSidebarCollapsed">{{ t('nav.backlog') }}</span>
+        </router-link>
+
+        <router-link
           to="/reports"
           class="nav-link"
           :class="{ active: $route.path === '/reports' }"
