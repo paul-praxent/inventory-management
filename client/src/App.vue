@@ -279,6 +279,34 @@ export default {
   /* Border radius */
   --radius-button: 6px;
   --radius-card: 10px;
+
+  /*
+   * Typography
+   * Barlow (body/UI) is self-hosted via @fontsource, imported once in
+   * main.js - see the woff2 files under node_modules/@fontsource/barlow*
+   * that Vite bundles into the build output, so there's no runtime
+   * dependency on an external font host. Barlow Semi Condensed is used
+   * for headings/stat figures only, to give the dense, technical
+   * hierarchy contrast that plain Barlow at larger sizes doesn't have.
+   */
+  --font-family-body: 'Barlow', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  --font-family-heading: 'Barlow Semi Condensed', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+
+  /*
+   * Type scale - each step is at least 1.25x the previous (checked against
+   * .logo h1, .page-header h2, .card-title, .stat-value, .stat-label and
+   * table th, which previously ranged from a flat 1.17x-1.22x between
+   * neighboring steps). --font-size-xs doubles as the shared "micro label"
+   * tier (uppercase table headers + stat labels), which is intentionally
+   * the same size for both rather than an "adjacent" step.
+   */
+  --font-size-xs: 0.75rem;      /* 12px - th, badge, stat-label */
+  --font-size-sm: 0.875rem;     /* 14px - secondary body text */
+  --font-size-base: 1rem;       /* 16px - body */
+  --font-size-md: 1.25rem;      /* 20px - card-title (1.25x xs) */
+  --font-size-lg: 1.5625rem;    /* 25px - logo h1 (1.25x md) */
+  --font-size-xl: 2rem;         /* 32px - page-header h2 (1.28x lg) */
+  --font-size-2xl: 2.5rem;      /* 40px - stat-value (1.25x xl) */
 }
 
 * {
@@ -288,7 +316,7 @@ export default {
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-family: var(--font-family-body);
   background: var(--color-bg-page);
   color: var(--color-text-body);
   -webkit-font-smoothing: antialiased;
@@ -335,7 +363,8 @@ body {
 }
 
 .logo h1 {
-  font-size: 1.375rem;
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-lg);
   font-weight: 700;
   color: var(--color-text-heading);
   letter-spacing: -0.025em;
@@ -431,7 +460,7 @@ body {
   }
 
   .logo h1 {
-    font-size: 1.125rem;
+    font-size: var(--font-size-md);
   }
 
   .nav-toggle {
@@ -476,7 +505,8 @@ body {
 }
 
 .page-header h2 {
-  font-size: 1.875rem;
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-xl);
   font-weight: 700;
   color: var(--color-text-heading);
   margin-bottom: 0.375rem;
@@ -510,7 +540,7 @@ body {
 
 .stat-label {
   color: var(--color-text-muted);
-  font-size: 0.875rem;
+  font-size: var(--font-size-xs);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -518,7 +548,8 @@ body {
 }
 
 .stat-value {
-  font-size: 2.25rem;
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-2xl);
   font-weight: 700;
   color: var(--color-text-heading);
   letter-spacing: -0.025em;
@@ -558,7 +589,8 @@ body {
 }
 
 .card-title {
-  font-size: 1.125rem;
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-md);
   font-weight: 700;
   color: var(--color-text-heading);
   letter-spacing: -0.025em;
@@ -584,7 +616,7 @@ th {
   padding: 0.5rem 0.75rem;
   font-weight: 600;
   color: var(--color-text-label);
-  font-size: 0.75rem;
+  font-size: var(--font-size-xs);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -608,7 +640,7 @@ tbody tr:hover {
   display: inline-block;
   padding: 0.313rem 0.75rem;
   border-radius: 6px;
-  font-size: 0.75rem;
+  font-size: var(--font-size-xs);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.025em;
