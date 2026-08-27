@@ -142,6 +142,7 @@ export default {
 
 .filter-select {
   padding: 0.4rem 0.75rem;
+  min-height: 44px;
   border: 1px solid var(--color-border-strong);
   border-radius: 6px;
   font-size: 0.813rem;
@@ -167,6 +168,8 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
   padding: 0.4rem;
   background: white;
   border: 1px solid var(--color-border);
@@ -191,5 +194,31 @@ export default {
 .reset-filters-btn svg {
   width: 18px;
   height: 18px;
+}
+
+@media (max-width: 768px) {
+  .filters-container {
+    padding: 0 1rem;
+    align-items: flex-start;
+  }
+
+  .filters-grid {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .filter-group {
+    flex: 1 1 100%;
+    justify-content: space-between;
+  }
+
+  .filter-select {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .reset-filters-btn {
+    margin-top: 0;
+  }
 }
 </style>

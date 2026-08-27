@@ -6,23 +6,37 @@
           <h1>{{ t('nav.companyName') }}</h1>
           <span class="subtitle">{{ t('nav.subtitle') }}</span>
         </div>
-        <nav class="nav-tabs">
-          <router-link to="/" :class="{ active: $route.path === '/' }">
+
+        <button
+          class="nav-toggle"
+          type="button"
+          :aria-expanded="mobileMenuOpen"
+          aria-controls="primary-navigation"
+          aria-label="Toggle navigation menu"
+          @click="mobileMenuOpen = !mobileMenuOpen"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
+          </svg>
+        </button>
+
+        <nav id="primary-navigation" class="nav-tabs" :class="{ open: mobileMenuOpen }">
+          <router-link to="/" :class="{ active: $route.path === '/' }" @click="mobileMenuOpen = false">
             {{ t('nav.overview') }}
           </router-link>
-          <router-link to="/inventory" :class="{ active: $route.path === '/inventory' }">
+          <router-link to="/inventory" :class="{ active: $route.path === '/inventory' }" @click="mobileMenuOpen = false">
             {{ t('nav.inventory') }}
           </router-link>
-          <router-link to="/orders" :class="{ active: $route.path === '/orders' }">
+          <router-link to="/orders" :class="{ active: $route.path === '/orders' }" @click="mobileMenuOpen = false">
             {{ t('nav.orders') }}
           </router-link>
-          <router-link to="/spending" :class="{ active: $route.path === '/spending' }">
+          <router-link to="/spending" :class="{ active: $route.path === '/spending' }" @click="mobileMenuOpen = false">
             {{ t('nav.finance') }}
           </router-link>
-          <router-link to="/demand" :class="{ active: $route.path === '/demand' }">
+          <router-link to="/demand" :class="{ active: $route.path === '/demand' }" @click="mobileMenuOpen = false">
             {{ t('nav.demandForecast') }}
           </router-link>
-          <router-link to="/reports" :class="{ active: $route.path === '/reports' }">
+          <router-link to="/reports" :class="{ active: $route.path === '/reports' }" @click="mobileMenuOpen = false">
             Reports
           </router-link>
         </nav>
@@ -55,7 +69,8 @@
 </template>
 
 <script>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { api } from './api'
 import { useAuth } from './composables/useAuth'
 import { useI18n } from './composables/useI18n'
@@ -80,6 +95,14 @@ export default {
     const showProfileDetails = ref(false)
     const showTasks = ref(false)
     const apiTasks = ref([])
+    const mobileMenuOpen = ref(false)
+
+    // Close the mobile nav panel whenever navigation happens (covers back/
+    // forward and any programmatic route changes, not just link clicks)
+    const route = useRoute()
+    watch(() => route.path, () => {
+      mobileMenuOpen.value = false
+    })
 
     // Merge mock tasks from currentUser with API tasks
     const tasks = computed(() => {
@@ -155,7 +178,8 @@ export default {
       tasks,
       addTask,
       deleteTask,
-      toggleTask
+      toggleTask,
+      mobileMenuOpen
     }
   }
 }
@@ -325,12 +349,34 @@ body {
   border-left: 1px solid var(--color-border);
 }
 
+.nav-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin-left: auto;
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  color: var(--color-text-muted);
+  cursor: pointer;
+}
+
+.nav-toggle svg {
+  width: 22px;
+  height: 22px;
+}
+
 .nav-tabs {
   display: flex;
   gap: 0.25rem;
 }
 
 .nav-tabs a {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
   padding: 0.625rem 1.25rem;
   color: var(--color-text-muted);
   text-decoration: none;
@@ -367,6 +413,62 @@ body {
   width: 100%;
   margin: 0 auto;
   padding: 1.5rem 2rem;
+}
+
+/*
+ * Mobile nav: the 6 nav-tabs links no longer fit in the non-wrapping header
+ * row below 768px, so they collapse behind a hamburger toggle and reappear
+ * as a slide-down panel anchored under the header. Logo + profile menu stay
+ * inline since those must always remain reachable/visible.
+ */
+@media (max-width: 768px) {
+  .nav-container {
+    padding: 0 1rem;
+  }
+
+  .subtitle {
+    display: none;
+  }
+
+  .logo h1 {
+    font-size: 1.125rem;
+  }
+
+  .nav-toggle {
+    display: flex;
+  }
+
+  .nav-container > .nav-tabs {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .nav-tabs {
+    display: none;
+    flex-direction: column;
+    gap: 0;
+    position: absolute;
+    top: 70px;
+    left: 0;
+    right: 0;
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    padding: 0.5rem;
+  }
+
+  .nav-tabs.open {
+    display: flex;
+  }
+
+  .nav-tabs a {
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+  }
+
+  .nav-tabs a.active::after {
+    display: none;
+  }
 }
 
 .page-header {

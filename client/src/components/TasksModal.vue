@@ -533,8 +533,8 @@ label {
 }
 
 .task-delete-btn {
-  width: 28px;
-  height: 28px;
+  width: 44px;
+  height: 44px;
   background: var(--color-danger-accent);
   color: white;
   border: none;

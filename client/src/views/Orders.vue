@@ -276,4 +276,12 @@ export default {
   font-size: 0.813rem;
   color: var(--color-text-muted);
 }
+
+@media (max-width: 768px) {
+  .card-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+}
 </style>

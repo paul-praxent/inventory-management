@@ -323,6 +323,18 @@ export default {
   height: 18px;
 }
 
+@media (max-width: 768px) {
+  .card-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-box {
+    min-width: 0;
+    width: 100%;
+  }
+}
+
 .loading,
 .error {
   padding: 2rem;

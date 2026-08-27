@@ -4,6 +4,7 @@
       class="profile-button"
       aria-haspopup="true"
       :aria-expanded="isDropdownOpen"
+      :aria-label="`${currentUser.name} - profile menu`"
       @click="toggleDropdown"
       @blur="handleBlur"
       @keydown.escape="closeDropdown"
@@ -287,5 +288,18 @@ const handleLogout = () => {
   border-radius: 12px;
   min-width: 20px;
   text-align: center;
+}
+
+/* Below 768px the header row is tight (hamburger + logo + language switcher
+   + profile all in one line), so the name label collapses to icon-only. */
+@media (max-width: 768px) {
+  .profile-name {
+    display: none;
+  }
+
+  .profile-button {
+    padding: 0.5rem;
+    min-height: 44px;
+  }
 }
 </style>

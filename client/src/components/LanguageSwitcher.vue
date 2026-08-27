@@ -4,6 +4,7 @@
       class="language-button"
       aria-haspopup="true"
       :aria-expanded="isDropdownOpen"
+      :aria-label="`Language: ${localeName}`"
       @click="toggleDropdown"
       @blur="handleBlur"
       @keydown.escape="closeDropdown"
@@ -187,5 +188,18 @@ const selectLanguage = (locale) => {
 .check-icon {
   color: var(--color-brand);
   flex-shrink: 0;
+}
+
+/* Below 768px the header row is tight (hamburger + logo + language switcher
+   + profile all in one line), so the label collapses to icon-only. */
+@media (max-width: 768px) {
+  .language-label {
+    display: none;
+  }
+
+  .language-button {
+    padding: 0.5rem;
+    min-height: 44px;
+  }
 }
 </style>
